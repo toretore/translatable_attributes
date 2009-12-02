@@ -1,0 +1,62 @@
+TranslatableAttributes
+===================
+
+TranslatableAttributes provides simple translations for model attributes. All
+translations are stored in a single table which is linked polymorphically to
+each model having translatable attributes. Nothing gets stored on the models
+that provide the translatable attributes, the methods provided just proxy the
+call to the model responsible for storing the translation.
+
+The table storing the translations should be named "attribute_translations"
+and contain the columns translatable_type, translatable_id, attribute, locale
+and text. TranslatableAttributes has a default AttributeTranslation model which
+will just work, but you can create your own with:
+
+script/generate model AttributeTranslation translatable_type:string translatable_id:integer attribute:string locale:string text:text
+
+When storing translations for a given record, TranslatableAttributes will only
+find_or_initialize the AttributeTranslation record and update its "text"
+attribute, but not save it. The saving usually happens automatically when you
+save the parent object as long as there are no errors. The AttributeTranslation
+model by default has no validations, so this will work as it should, but if you
+want to perform validations on the translation objects, that's entirely up to
+you, and it's up to you to make sure validation errors are handled properly.
+
+
+Example
+=======
+
+class Product < ActiveRecord::Base
+
+  translates_attributes :name, :description
+  #Product now has_many :attribute_translations
+
+end
+
+product = Product.new
+product.name_en = "Chair"
+product.name_no = "Stol"
+
+product.name_en
+#=> "Chair"
+product.name_no
+#=> "Stol"
+
+#The record can set a default locale
+product.locale = "en"
+product.description = "Sit on me"
+product.description
+#=> "Sit on me"
+product.description == product.description_en
+#=> true
+
+#If not set, Product#locale uses TranslatableAttributes.locale which uses I18n.locale
+I18n.locale = "no"
+product.locale = nil
+product.description = "Sitt på meg"
+product.description_no
+#=> "Sitt på meg"
+
+
+
+Copyright (c) 2009 Tore Darell, released under the MIT license
