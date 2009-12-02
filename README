@@ -59,4 +59,55 @@ product.description_no
 
 
 
+CAVEATS
+=======
+
+This plugin uses method_missing to provide getters and setters for translatable
+attributes. This means that any methods with the same names defined on the model
+class or instance will override these, as it will never get to method_missing.
+ActiveRecord defines methods for every column in the associated table, which
+means you can't have actual columns on the table for the attributes that are
+going to be translated.
+
+  Product
+  #=> Product(name:string foo:string)
+  Product.translatable_attributes
+  #=> ["name", "description"]
+  p = Product.new
+  p.locale = "nl"
+  p.name_en = "Donkey"
+  p.name_nl = "Ezel"
+  p.name
+  #=> nil
+  p.name = "Little horse"
+  p.name
+  #=> "Little horse"
+  p.name_nl #nl is the set locale
+  #=> "Ezel" #should have been "Little horse"
+  p.description = "Groen met turbocompressor"
+  p.description_en = "It's just like, it's just like, a mini-horse"
+  p.description_nl
+  #=> "Groen met turbocompressor"
+  p.locale = "en"
+  p.description
+  #=> "It's just like, it's just like, a mini-horse"
+
+If you really need those columns to be there, you can work around this by
+undefing the getter and setter created by AR:
+
+  #Continuing session from above..
+  Product.undef_method :name
+  Product.undef_method :name=
+  p.name
+  #=> "Donkey"
+  p.locale = "nl"
+  p.name
+  #=> "Ezel"
+
+You can also read the translations directly using the association extensions:
+
+  p.attribute_translations.text_for_attribute("name", "nl")
+  #=> "Ezel"
+
+
 Copyright (c) 2009 Tore Darell, released under the MIT license
