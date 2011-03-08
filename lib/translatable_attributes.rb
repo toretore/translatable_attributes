@@ -64,13 +64,13 @@ module TranslatableAttributes
 
     module AssociationExtensions
 
-      def for_attribute(attribute, locale)
-        attribute, locale = "#{attribute}", "#{locale}"
-        detect{|t| t.attribute == attribute && t.locale == locale } || build(:attribute => attribute, :locale => locale)
+      def for_attribute(attribute_name, locale)
+        attribute_name, locale = "#{attribute_name}", "#{locale}"
+        detect{|t| t.attribute_name == attribute_name && t.locale == locale } || build(:attribute_name => attribute_name, :locale => locale)
       end
 
-      def text_for_attribute(attribute, locale)
-        for_attribute(attribute, locale).text
+      def text_for_attribute(attribute_name, locale)
+        for_attribute(attribute_name, locale).text
       end
 
     end

@@ -6,7 +6,7 @@ ActiveRecord::Schema.define do
   end
   create_table :attribute_translations, :force => true do |t|
     t.belongs_to :translatable, :polymorphic => true
-    t.string :attribute, :locale, :text
+    t.string :attribute_name, :locale, :text
   end
 end
 
@@ -218,7 +218,7 @@ class AssociationExtensionsTest < ActiveSupport::TestCase
 
   test "for_attribute should return the first AttributeTranslation for the product matching the supplied attribute and locale" do
     product = Product.create!(:price => 5)
-    translation = product.attribute_translations.create!(:locale => "humbaba", :attribute => "name", :text => "mighty moussaka")
+    translation = product.attribute_translations.create!(:locale => "humbaba", :attribute_name => "name", :text => "mighty moussaka")
     assert_equal translation, product.attribute_translations.for_attribute("name", "humbaba")
   end
 
@@ -231,7 +231,7 @@ class AssociationExtensionsTest < ActiveSupport::TestCase
 
   test "text_for_attribute should return the text content for the AttributeTranslation amtching the attribute and locale" do
     product = Product.create!(:price => 5)
-    translation = product.attribute_translations.create!(:locale => "humbaba", :attribute => "name", :text => "mighty moussaka")
+    translation = product.attribute_translations.create!(:locale => "humbaba", :attribute_name => "name", :text => "mighty moussaka")
     assert_equal "mighty moussaka", product.attribute_translations.text_for_attribute("name", "humbaba")
   end
 
