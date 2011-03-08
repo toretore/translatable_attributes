@@ -1,0 +1,5 @@
+== v0.2 ==
+* Moved tasks to lib/tasks, to make the plugins usable in Rails 3: http://edgeguides.rubyonrails.org/3_0_release_notes.html.
+
+== v0.1 ==
+* Initial Release
